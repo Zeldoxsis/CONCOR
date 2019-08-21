@@ -1,0 +1,162 @@
+---
+title: "CONCOR Example"
+author: "Tyme Suda"
+date: "8/20/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+Load in the required functions and data, igraph is required but is loaded when sourcing CONCOR.R. For this example we will use the krackhardt high-tech managers data.
+
+```{r CONCORsetup, include=TRUE, message=FALSE}
+load("~/CONCOR/HighTech.Rdata")
+source('~/CONCOR/CONCOR.R')
+source('~/CONCOR/CONCOR_supplemental_fun.R')
+```
+
+
+## Runnig CONCOR
+
+Create the adjacency matrixes from each igraph object of intrest.
+
+```{r adjacency}
+m0=get.adjacency(gadvice, sparse = FALSE)
+m1=get.adjacency(gfriend, sparse = FALSE)
+m2=get.adjacency(greport, sparse = FALSE)
+```
+
+Store the adacency matrixes denoting all relationships of intrest within a single list. Fora single relationship simply put it ni a list of length 1. If maultple relationships are used the matrixies MUST be of the same size.
+
+```{r listing}
+m.list1=list(m0)
+m.list2=list(m0,m1)
+m.list3=list(m0,m1,m2)
+```
+
+Once stored within a list CONCOR can be ran. It will split the matrix and continue to split each subsiquent, smaller matrix untill the specified number of splits are made. If the specified number of splits would cause structuraly equivilant nodes to be split, or a single node to be split the CONCOR algorythim will fail. In adition the current version seperates all isolated nodes into their own block before running concor.
+
+The output from concor is matrix with the first coumn being the block membership and the second being the node's name. The rown names are simply the arbituary order they are returned in.
+
+Shown below are all possible splits of the gadvice data from the krackhardt high-tech managers data and the first failing split. The output from the 2nd and 4th (last possible) splits are displayed
+
+```{r CONCORrun}
+C1.1=concor(m.list1, p=1)
+C1.2=concor(m.list1, p=2)
+C1.3=concor(m.list1, p=3)
+C1.4=concor(m.list1, p=4)
+#C1.5=concor(m.list1, p=5)
+```
+
+The second split
+
+```{r s1.2}
+C1.2
+```
+
+The fourth split
+
+```{r s1.4}
+C1.4
+```
+
+It can be seen that in the fourth split maultiple nodes have become isolated in their own blockings furthe splits will in turn fail.
+
+## For Maultiple Relationships
+
+When maultiple realationships are to be considerd the adjacency matrixies must be put into a single list this was done above when I showed some of the possible lists. For this I will use `m.list2=list(m0,m1)` conprised of the advice and freindship relationships.
+
+Once listed together running CONCOR for maultiple relations is identicle to a single relation.
+
+```{r CONCORmaulti}
+C2.1=concor(m.list2, p=1)
+C2.2=concor(m.list2, p=2)
+C2.3=concor(m.list2, p=3)
+C2.4=concor(m.list2, p=4)
+#C2.5=concor(m.list2, p=5)
+```
+
+The output for the second split is shown below.
+
+```{r s2.2}
+C2.2
+```
+
+## Using the CONCOR Outputs
+
+Once CONCOR has been run and block membership is determined there are a near unednding number of things one can do to understand and represent the data. Two of the simplest ways are ploting the network with color representing block membership and blockmodeling. Functions to do both are included in the file `CONCOR_supplemental_fun.R`.
+
+To start either the CONCOR splits must be added as vertex attributes. This can be done using the function `blk.apply` from `CONCOR_supplemental_fun.R`. The inputs of this function are the igraph object you created the splits form, the split, and a name to give the new vertex attribute. This is shown below for all four splits for the advice nework from the krackhardt high-tech managers data.
+
+```{r addCONattrib}
+gadvice=blk.apply(gadvice, C1.1, "split1")
+gadvice=blk.apply(gadvice, C1.2, "split2")
+gadvice=blk.apply(gadvice, C1.3, "split3")
+gadvice=blk.apply(gadvice, C1.4, "split4")
+
+gadvice
+```
+
+## PLotting
+### The Network
+
+To plot the network with block memebrship represented by a colour the function `concor.plot` can be used from `CONCOR_supplemental_fun.R` simmply because it is easyer than saying `plot(iobject, vertex.color=vertex.attributes(iobject)[[split.name]], vertex.label=NA, vertex.size= 5,edge.arrow.size=.3, main=tital)` every time you want to plot one of your networks. Although in all liklyhood this function will need to be tweeked for individual use simply becuse you want your nodes to be a difrent size or to use another colour scheme. The inputs for this function are the igraph object, the name of the split you want to represent, and a title.
+
+The function is use below to plot the first and second splits of the advice network.
+
+``` {r plotNET}
+concor.plot(gadvice, "split1", "I am the first CONCOR split for the advice nework")
+concor.plot(gadvice, "split2", "And I am the second")
+```
+
+### Blockmodel Stuff
+
+Blockmodeling is something that is built into the library `statnet`, or more specificly its dependent package `SNA`. For the purposes of creating blocmodels based off the CONCOR outputs a function that uses `statnet` was created called `make.blokmodel.stuff` in `CONCOR_supplemental_fun.R`. This function does a bit more than creates a blockmodel, if its name was not telling enough. In fact it creates the blockmodel as created by 'statnet' but also produces igraph objects representing the reduced graph of the overall network.
+
+The inputs for this function are simply the igraph object representing your network and the name of the concor split as it has been saved in the object. This is ran below for the first and second splits for the advice network, the output for the first split is also shown.
+
+```{r make.blk.shit, message=FALSE, warning=FALSE}
+bl1=make.blokmodel.stuff(gadvice, "split1")
+bl2=make.blokmodel.stuff(gadvice, "split2")
+bl1
+```
+
+Outputed from this function is a list. The first list element is the blockmodel object as `statnet` outputs it. The second element is an igraph object representing the reduced graph of the network based off the blockmodel, this output has unweighted conection values. The conections were determined to be existant if the density of a block was greater than the overall density of the network and zero if less. The third output is an igraph object representing the same reduced graph but the conections were kept weighted based of the density of the blocks. The final part of the output list is the density used as a cutoff for both reduced graphs.
+
+##### Ploting the blockmodel
+
+Ploting the blockmodel itself is as siple as just running the plot function on it due to it being built into the `SNA` package. Sadly custimization options are limited. If the listing the node numbers bothers you (if you have a large nework they will) running `bl2[[1]]$plabels = rep("",length(bl2[[1]]$plabels))` where `bl2[[1]]` is the first ouput of `make.blokmodel.stuff` for your network.
+
+The simple plotting of the blockmodel is shown below for the second split. It was titled by using `bl2[[1]]$glabels = "title"` despite not having an option to.
+
+``` {r plot.block2}
+bl2[[1]]$glabels = "second CONCOR split of the advice network" 
+plot(bl2[[1]])
+```
+
+Due to the high density of the conections in this network it is verry hard to tell what is going on just from the blockmodel. To actually see how these blocks relate to eachother it is much easyer to look at the reduced graph.
+
+##### Plotting the Reduced Graphs
+
+To plot the reduced graphs of the network the second and third ouputs from `make.blokmodel.stuff` are used. The second (non weighted) should be used if you don't care about the relitve streangth of the conections between blocks as long as they are stronger than the average density of the whole network. The second should be used if the relitve strengths do matter to you.
+
+For the unweighted reduced graph use the `reduced.plot` function (or just write your own depending on what you want it to do). This function plots the directed reduced graph with each seperate block as a sperate colour. The color will corespond to that of the blocks in the whole network if the `concor.plot` function is used. The output for the advice network's second split is shown below.
+```{r unweight.red}
+reduced.plot(bl2)
+```
+
+If the relitive weight of the ties matter to you then the third output from `make.blokmodel.stuff` and the plot function `weighted.reduced.plot` should be used. This function works the same as `reduced.plot` but sizes the links are dependent on the weight of those ties. An exaple of this for the second split of the advice network is shown below.
+
+```{r weight.red}
+weighted.reduced.plot(bl2)
+```
+
+For this network verry little is visually gained from keeping the ties weighted exept that the conections seem pretty evenly weighted.
+
+
+
+
