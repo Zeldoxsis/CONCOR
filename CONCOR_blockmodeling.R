@@ -1,5 +1,3 @@
-#rm(list = ls())
-source('CONCOR_order_functional_isolateready.R')
 
 make.blk=function(adj.list, splitn=1){
   #returns raw blockmodel data
@@ -164,18 +162,3 @@ plot.red= function(blk){
        edge.width=4, edge.arrow.size=.6, vertex.size= 25)
 }
 
-
-# #testing
-# load("D:/Documents/Traxler Reaserch/data/SR_anon.Rdata")
-# library(igraph)
-# m1=get.adjacency(SRanon[[1]], sparse = FALSE)
-# m2=get.adjacency(SRanon[[2]], sparse = FALSE)
-# 
-# adj.list=list(m1)
-# a=make.blk(list(m1,m2))
-# b=make.red(list(m2), weighted = FALSE)
-# plot.blk.labeless(a[[1]])
-# 
-# 
-# c=make.red.igraph(b[[1]][[1]])
-# plot.red(c)
