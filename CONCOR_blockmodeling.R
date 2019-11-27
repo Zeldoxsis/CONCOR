@@ -153,7 +153,7 @@ plot.red.weighted= function(blk){
        edge.width=(E(blk)$weight/2), edge.arrow.size=.6, vertex.size= 25)
 }
 
-plot.red= function(blk){
+plot.red.unweighted= function(blk){
   #plots just weighted blockmodel network
   #plots colors based on order of blocks (I think this should match those on the networks)
   plot(blk,vertex.color=c(1:length(vertex.attributes(blk)[[1]])), vertex.label = NA,
