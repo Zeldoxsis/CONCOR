@@ -23,8 +23,8 @@ make.blk=function(adj.list, splitn=1){
   blk.mod.list=lapply(adj.list, function(x) blockmodel(as.matrix(x), o.block))
   
   ##dtach sna and reatach whatever eles
-  invisible(lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE))
-  invisible(lapply(pre, library, character.only = TRUE))
+  suppressMessages(invisible(lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE)))
+  suppressMessages(invisible(lapply(pre, library, character.only = TRUE)))
   
   #return raw blockmedel data
   return(blk.mod.list)
@@ -103,9 +103,7 @@ plot.blk=function (x, ...) {
   if (!is.null(x$plabels)) 
     plab <- x$plabels
   else plab <- (1:n)[x$order.vector]
-  if (!is.null(x$glabels)) 
-    glab <- x$glabels
-  else glab <- 1:m
+  glab <- ""
   par(mfrow = c(floor(sqrt(m)), ceiling(m/floor(sqrt(m)))))
   if (m > 1) 
     for (i in 1:m) {
@@ -127,7 +125,7 @@ plot.blk=function (x, ...) {
   
   ##dtach sna and reatach whatever eles
   invisible(lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE))
-  invisible(lapply(pre, library, character.only = TRUE))
+  suppressMessages(invisible(lapply(pre, library, character.only = TRUE)))
 }
 
 plot.blk.labeless=function(bm){

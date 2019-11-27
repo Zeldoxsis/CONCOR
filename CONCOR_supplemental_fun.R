@@ -1,11 +1,7 @@
 #CONCOR supplementary functions
-
-#Created 8/20/19
 #Tyme Suda
 
 #Contains functions that can be usfull to be used on the outputs of CONCOR
-
-#simmple plotting functions:
 name=function(mat){
   #gives names v001,v002... to each collumn/row treated as the node names now
   a=1:nrow(mat)
@@ -30,8 +26,7 @@ concor.vlaiditycheck=function(m.list){
   #check if nodes are named
   b=sapply(m.list, function(x) is.null(colnames(x)))
   if (all(b)) {
-    warning("node names don't exist
-            Adding default node names")
+    warning("node names don't exist\nAdding default node names\n")
     m.list=lapply(m.list, function(x) name(x))
     b=sapply(m.list, function(x) is.null(colnames(x)))
   }
@@ -43,7 +38,7 @@ concor.vlaiditycheck=function(m.list){
   a=m.list[[1]]
   for (i in 1:length(m.list)) {
     if (all(colnames(a)!=colnames(m.list[[i]]))) {
-      stop("Node name mismatch2")
+      stop("Node name mismatch")
     }
   }
   return(m.list)
