@@ -150,13 +150,12 @@ plot.red.weighted= function(blk){
   #plots just weighted blockmodel network
   #plots colors based on order of blocks (I think this should match those on the networks)
   plot(blk,vertex.color=c(1:length(vertex.attributes(blk)[[1]])), vertex.label = NA,
-       edge.width=(E(blk)$weight/2), edge.arrow.size=.6, vertex.size= 25)
+       edge.width=(E(blk)$weight/3), edge.arrow.size=(E(blk)$weight/15), vertex.size= 25)
 }
 
 plot.red.unweighted= function(blk){
   #plots just weighted blockmodel network
   #plots colors based on order of blocks (I think this should match those on the networks)
-  plot(blk,vertex.color=c(1:length(vertex.attributes(blk)[[1]])), vertex.label = NA,
-       edge.width=4, edge.arrow.size=.6, vertex.size= 25)
+  plot(blk,vertex.color=c(1:length(vertex.attributes(blk)[[1]])), vertex.label = NA,edge.arrow.size=.6, vertex.size= 25)
 }
 
