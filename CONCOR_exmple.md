@@ -25,7 +25,7 @@ source('CONCOR_blockmodeling.R')
 
 ## Running CONCOR
 
-Create the adjacency matrixes from each igraph object of interest.
+Create the adjacency matrices from each igraph object of interest.
 
 
 ```r
@@ -34,7 +34,7 @@ m1=get.adjacency(gfriend, sparse = FALSE)
 m2=get.adjacency(greport, sparse = FALSE)
 ```
 
-Store the adacency matrixes denoting all relationships of interest within a single list. Fora single relationship simply put it in a list of length 1. If multple relationships are used the matrixies MUST be of the same size.
+Store the adjacency matrices denoting all relationships of interest within a single list. Fora single relationship simply put it in a list of length 1. If multiple relationships are used the matrices MUST be of the same size.
 
 
 ```r
@@ -43,14 +43,14 @@ m.list2=list(m0,m1)
 m.list3=list(m0,m1,m2)
 ```
 
-To check that both node names and adjacency matrix sizes, agree in adition to checking that node names exist (and adding them if they don't) the `concor.vlaiditycheck` function can be used. Below it can be seen that with valid input no warnigs are thrown, and this works even for a singular relation (where it simply checks that node names exist).
+To check that both node names and adjacency matrix sizes, agree in addition to checking that node names exist (and adding them if they don't) the `concor.validitycheck` function can be used. Below it can be seen that with valid input no warnings are thrown, and this works even for a singular relation (where it simply checks that node names exist).
 
 ```r
-m.list1=concor.vlaiditycheck(m.list1)
-m.list2=concor.vlaiditycheck(m.list2)
-m.list3=concor.vlaiditycheck(m.list3)
+m.list1=concor.validitycheck(m.list1)
+m.list2=concor.validitycheck(m.list2)
+m.list3=concor.validitycheck(m.list3)
 ```
-Now if there is something wrong with the inputs it starts to vigurously wave red flags at you, as shown below.
+Now if there is something wrong with the inputs it starts to vigorously wave red flags at you, as shown below.
 
 
 ```r
@@ -59,12 +59,12 @@ colnames(m1)=c("n","m")
 rownames(m1)=c("n","m")
 m2=matrix(c(5,6,7,8),2)
 
-#concor.vlaiditycheck(list(m1, m2)) fails and gives error: "Node name mismatch" due to m2 not having names but m1 having them
-concor.vlaiditycheck(list(m2, m2)) #adds node names but warns you that it did
+#concor.validitycheck(list(m1, m2)) fails and gives error: "Node name mismatch" due to m2 not having names but m1 having them
+concor.validitycheck(list(m2, m2)) #adds node names but warns you that it did
 ```
 
 ```
-## Warning in concor.vlaiditycheck(list(m2, m2)): node names don't exist
+## Warning in concor.validitycheck(list(m2, m2)): node names don't exist
 ## Adding default node names
 ```
 
@@ -81,13 +81,13 @@ concor.vlaiditycheck(list(m2, m2)) #adds node names but warns you that it did
 ```
 
 ```r
-#concor.vlaiditycheck(list(m1, m0)) gives error: "Adgacency matrixes of mixmatched sizes" due to matrixies of differing sizes being inputed
+#concor.validitycheck(list(m1, m0)) gives error: "Adgacency matrixes of mixmatched sizes" due to matrixies of differing sizes being inputed
 ```
 
 
-Once the adgacency matrixies are stored within a list and they are confirmed to be valid inputs, CONCOR can be run. It will split the matrix and continue to split each subsequent, smaller matrix until the specified number of splits are made. If the specified number of splits would cause structurally equivalent nodes to be split, or a single node to be split, the CONCOR algorithm will fail. In addition, the current version seperates all isolated nodes into their own block before running concor.
+Once the adjacency matrices are stored within a list and they are confirmed to be valid inputs, CONCOR can be run. It will split the matrix and continue to split each subsequent, smaller matrix until the specified number of splits are made. If the specified number of splits would cause structurally equivalent nodes to be split, or a single node to be split, the CONCOR algorithm will fail. In addition, the current version separates all isolated nodes into their own block before running concor.
 
-The output from concor is matrix with the first coumn being the block membership and the second being the node's name. The row names are simply the arbitrary order they are returned in.
+The output from concor is matrix with the first column being the block membership and the second being the node's name. The row names are simply the arbitrary order they are returned in.
 
 
 ### Example
@@ -171,7 +171,7 @@ It can be seen that in the fourth split multiple nodes have become isolated in t
 
 ## For Multiple Relationships
 
-When multiple realationships are to be considerd the adjacency matrixies must be put into a single list. This was done above when I showed some of the possible lists. For this I will use `m.list2=list(m0,m1)` comprised of the advice and friendship relationships.
+When multiple relationships are to be considered the adjacency matrices must be put into a single list. This was done above when I showed some of the possible lists. For this I will use `m.list2=list(m0,m1)` comprised of the advice and friendship relationships.
 
 Once listed together running CONCOR for multiple relations is identical to a single relation.
 
@@ -220,9 +220,9 @@ C2.2
 
 Once CONCOR has been run and block membership is determined, there are a near unending number of things one can do to understand and represent the data. Two of the simplest ways are plotting the network with color representing block membership and blockmodeling. Functions to do both are included in the file `CONCOR_supplemental_fun.R`.
 
-To start either the CONCOR splits must be added as vertex attributes. This can be done using the function `blk.apply` if the CONCOR outputs have been previously saved or by simply using the `make.igraph` function that will run CONCOR and apply the outputs as the vertex attribute `csplitn` whre n is the split specified. Both functions are located in the `CONCOR_supplemental_fun.R` file. 
+To start either the CONCOR splits must be added as vertex attributes. This can be done using the function `blk.apply` if the CONCOR outputs have been previously saved or by simply using the `make.igraph` function that will run CONCOR and apply the outputs as the vertex attribute `csplitn` where n is the split specified. Both functions are located in the `CONCOR_supplemental_fun.R` file. 
 
-The inputs of `blk.apply` are the igraph object you created the splits from, the split, and a name to give the new vertex attribute. This is shown below for all four splits for the advice nework from the Krackhardt high-tech managers data.
+The inputs of `blk.apply` are the igraph object you created the splits from, the split, and a name to give the new vertex attribute. This is shown below for all four splits for the advice network from the Krackhardt high-tech managers data.
 
 
 ```r
@@ -249,7 +249,7 @@ gadvice
 ## + ... omitted several edges
 ```
 
-The same can simply be be done without first running CONCOR by using `make.igraph` function on the list of adgacency matrixies you are intrested in and the split number you want, as shown below for the second split. This has the advantage of returning the split added to igraph objects for each relationship.
+The same can simply be be done without first running CONCOR by using `make.igraph` function on the list of adjacency matrices you are interested in and the split number you want, as shown below for the second split. This has the advantage of returning the split added to igraph objects for each relationship.
 
 
 ```r
@@ -258,9 +258,9 @@ make.igraph(m.list2, 2)
 
 ```
 ## [[1]]
-## IGRAPH 3a2e113 DN-- 21 190 -- 
+## IGRAPH edf1b1a DN-- 21 190 -- 
 ## + attr: name (v/c), csplit2 (v/n)
-## + edges from 3a2e113 (vertex names):
+## + edges from edf1b1a (vertex names):
 ##  [1] v1->v2  v1->v4  v1->v8  v1->v16 v1->v18 v1->v21 v2->v6  v2->v7 
 ##  [9] v2->v21 v3->v1  v3->v2  v3->v4  v3->v6  v3->v7  v3->v8  v3->v9 
 ## [17] v3->v10 v3->v11 v3->v12 v3->v14 v3->v17 v3->v18 v3->v20 v3->v21
@@ -272,9 +272,9 @@ make.igraph(m.list2, 2)
 ## + ... omitted several edges
 ## 
 ## [[2]]
-## IGRAPH 3a2e369 DN-- 21 102 -- 
+## IGRAPH edf1b1a DN-- 21 102 -- 
 ## + attr: name (v/c), csplit2 (v/n)
-## + edges from 3a2e369 (vertex names):
+## + edges from edf1b1a (vertex names):
 ##  [1] v1 ->v2  v1 ->v4  v1 ->v8  v1 ->v12 v1 ->v16 v2 ->v1  v2 ->v18
 ##  [8] v2 ->v21 v3 ->v14 v3 ->v19 v4 ->v1  v4 ->v2  v4 ->v8  v4 ->v12
 ## [15] v4 ->v16 v4 ->v17 v5 ->v2  v5 ->v9  v5 ->v11 v5 ->v14 v5 ->v17
@@ -285,7 +285,7 @@ make.igraph(m.list2, 2)
 ## [50] v11->v19 v12->v1  v12->v4  v12->v17 v12->v21 v13->v5  v13->v11
 ## + ... omitted several edges
 ```
-While a thrid opption and probably the most usfull for this situation, of having igraph objects to start, is to run `concor.igraph.apply` on the list of igraph objects of intrest. This does the same thing as `make.igraph` but the input list is of igraph objects not the adgacency matrixies.
+While a third option and probably the most useful for this situation, of having igraph objects to start, is to run `concor.igraph.apply` on the list of igraph objects of interest. This does the same thing as `make.igraph` but the input list is of igraph objects not the adjacency matrices.
 
 
 ```r
@@ -325,11 +325,11 @@ adv.freind.igraph
 ## [36] v10->v16 v10->v20 v11->v1  v11->v2  v11->v3  v11->v4  v11->v5 
 ## + ... omitted several edges
 ```
-The main reson to use this method is that any existing vertex atributes are kept unlike when using `make.igraph`.
+The main reason to use this method is that any existing vertex attributes are kept unlike when using `make.igraph`.
 
-### PLotting the network
+### Plotting the network
 
-To plot the network with block memebership represented by a colour, the function `concor.plot` can be used from `CONCOR_supplemental_fun.R` simmply because it is easier than saying `plot(iobject, vertex.color=vertex.attributes(iobject)[[split.name]], vertex.label=NA, vertex.size= 5,edge.arrow.size=.3)` every time you want to plot one of your networks. Although in all likelihood this function will need to be tweaked for individual use simply becuse you want your nodes to be a diffrent size or to use another colour scheme. The inputs for this function are the igraph object, the name of the split you want to represent, and a title.
+To plot the network with block membership represented by a color, the function `concor.plot` can be used from `CONCOR_supplemental_fun.R` simply because it is easier than saying `plot(iobject, vertex.color=vertex.attributes(iobject)[[split.name]], vertex.label=NA, vertex.size= 5,edge.arrow.size=.3)` every time you want to plot one of your networks. Although in all likelihood this function will need to be tweaked for individual use simply because you want your nodes to be a different size or to use another color scheme. The inputs for this function are the igraph object, the name of the split you want to represent, and a title.
 
 The function is used below to plot the first and second splits of the advice network based off the splits found when using `gadvice` and `gfriend`.
 
@@ -350,9 +350,9 @@ title(main="And I am the second split")
 
 ### Blockmodeling
 
-Blockmodeling is something that is built into the library `statnet`, or more specifically its dependent package `SNA`. For the purposes of creating blockmodels based off the CONCOR outputs, a function that uses `SNA` was created called `make.blk` in `CONCOR_blockmodeling`. This function creates a list of blockmodel type objects one for each relation inputed in the list `adj.list`, the first input for the specified CONCOR splitting (the second input). It must be noted that `adj.list` must be a list of adjacency matrixies even if only one relation is being looked at and the output is a list of the blokmedel type objects ready to be plotted with either `plot.blk` or `plot.blk.labeless` if the labels don't look good for your data.
+Blockmodeling is something that is built into the library `statnet`, or more specifically its dependent package `SNA`. For the purposes of creating blockmodels based off the CONCOR outputs, a function that uses `SNA` was created called `make.blk` in `CONCOR_blockmodeling`. This function creates a list of blockmodel type objects one for each relation inputted in the list `adj.list`, the first input for the specified CONCOR splitting (the second input). It must be noted that `adj.list` must be a list of adjacency matrices even if only one relation is being looked at and the output is a list of the blockmodel type objects ready to be plotted with either `plot.blk` or `plot.blk.labeless` if the labels don't look good for your data.
 
-This is ran below for the second split for the advice and freindship networks treated as two relations.
+This is ran below for the second split for the advice and friendship networks treated as two relations.
 
 
 ```r
@@ -415,9 +415,9 @@ bl2
 ## Block 4 0.2083333 0.38888889 0.3000000 0.5000000
 ```
 
-#### Ploting the blockmodel
+#### Plotting the blockmodel
 
-Each element of the outputed list can be ploted with either `plot.blk` or `plot.blk.labeless` the plots for the advice blockmodel are shown below. The first is with labels the second without.
+Each element of the outputted list can be plotted with either `plot.blk` or `plot.blk.labeless` the plots for the advice blockmodel are shown below. The first is with labels the second without.
 
 
 
@@ -445,7 +445,7 @@ Due to the high density of the connections in this network it is very hard to te
 
 #### Making the Reduced Graphs
 
-To plot the reduced graphs a couple of function calls must be made, adjacency matrixies for each reruced graph must be created. This is done by using the `make.red` function. It takes the list of adqacency matrixies of intrest (one for each relation), the split number you want, and whether you want the output weighted or not (TRUE/FALSE) as inputs. This function then outputs a nested list, the first element `$red.mat` is the list of reduced matrixies, and the second part of the list, `$dens`, is the list of cutoff densities used (densities of the overall networks). This is shown below for the second split of the advice and freindship networks treated as two relations when weighted and unweighted.
+To plot the reduced graphs a couple of function calls must be made, adjacency matrices for each reduced graph must be created. This is done by using the `make.red` function. It takes the list of adjacency matrices of interest (one for each relation), the split number you want, and whether you want the output weighted or not (TRUE/FALSE) as inputs. This function then outputs a nested list, the first element `$red.mat` is the list of reduced matrices, and the second part of the list, `$dens`, is the list of cutoff densities used (densities of the overall networks). This is shown below for the second split of the advice and friendship networks treated as two relations when weighted and unweighted.
 
 
 ```r
@@ -514,7 +514,7 @@ red.uw
 ## [1] 0.4523810 0.2428571
 ```
 
-Once the reduced matrixies are made they can be plotted in igraph as networks by using the `make.red.igraph` function to make them into igraph objects then using `plot.red.weighted` or `plot.red.unweighted` depending on if they are weighted or not. Below The graphs of the weighted and unweighted reduced network plots for both the advice and freindship networks are shown.
+Once the reduced matrices are made they can be plotted in igraph as networks by using the `make.red.igraph` function to make them into igraph objects then using `plot.red.weighted` or `plot.red.unweighted` depending on if they are weighted or not. Below The graphs of the weighted and unweighted reduced network plots for both the advice and friendship networks are shown.
 
 
 ```r
@@ -536,7 +536,7 @@ title(main="Advice Unweighted")
 ```r
 w.frn=make.red.igraph(red.w$red.mat[[2]])
 plot.red.weighted(w.frn)
-title(main="Freindship Weighted")
+title(main="Friendship Weighted")
 ```
 
 ![](CONCOR_exmple_files/figure-html/unnamed-chunk-4-3.png)<!-- -->
@@ -544,7 +544,7 @@ title(main="Freindship Weighted")
 ```r
 uw.frn=make.red.igraph(red.uw$red.mat[[2]])
 plot.red.unweighted(uw.frn)
-title(main="Freindship Unweighted")
+title(main="Friendship Unweighted")
 ```
 
 ![](CONCOR_exmple_files/figure-html/unnamed-chunk-4-4.png)<!-- -->

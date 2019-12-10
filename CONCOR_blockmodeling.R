@@ -9,8 +9,8 @@ make.blk=function(adj.list, splitn=1){
   o=match(colnames(adj.list[[1]]), con.out$vertex)
   o.block=con.out$block[o]
   
-  ##prepare to atach sna (needed for next part) so it can later be detached easily
-  #record the packagest that existed at the start
+  ##prepare to attach sna (needed for next part) so it can later be detached easily
+  #record the packages that existed at the start
   pre=names(sessionInfo()$otherPkgs)
   #get rid of all nondefault packages
   if (length(pre)!=0) {
@@ -19,14 +19,14 @@ make.blk=function(adj.list, splitn=1){
   #add that asshole of a package nice and quietly
   suppressMessages(library(sna))
   
-  #make blokmodels (aka the thing allthis has lead to)
+  #make blokmodels (aka the thing all this has lead to)
   blk.mod.list=lapply(adj.list, function(x) blockmodel(as.matrix(x), o.block))
   
-  ##dtach sna and reatach whatever eles
+  ##detach sna and reattach whatever else
   suppressMessages(invisible(lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE)))
   suppressMessages(invisible(lapply(pre, library, character.only = TRUE)))
   
-  #return raw blockmedel data
+  #return raw blockmodel data
   return(blk.mod.list)
 }
 
@@ -39,20 +39,20 @@ edge.dens=function(adj.mat){
 }
 
 make.red=function(adj.list, splitn=1, weighted=FALSE){
-  #returns list of reduced matrixies one for each relation in $red.mat
+  #returns list of reduced matrixes one for each relation in $red.mat
   #also returns the cutoff densities in $dens
-  #inputs are list of adj matrxies what split you want and weather weited or not (True is weighted)
+  #inputs are list of adj matrixes what split you want and weather weighted or not (True is weighted)
   
-  #get the raw blockmodel resaults
+  #get the raw blockmodel results
   blk.out=make.blk(adj.list, splitn)
   
-  #check density of the adgacency matrix
+  #check density of the adjacency matrix
   dens.vec=sapply(adj.list, function(x) edge.dens(x))
   
-  #pull out the density matrix of the blk.module
+  #pull out the density matrix of blk.out
   d=lapply(blk.out, function(x) x[[5]])
   
-  #play with the matrix for latter use
+  #play with the matrix for later use
   mat.return=vector("list", length = length(dens.vec))
   
   for (i in 1:length(dens.vec)) {
@@ -69,7 +69,7 @@ make.red=function(adj.list, splitn=1, weighted=FALSE){
       #find minimum density and scale all by that
       min=min(temp1[temp1>0])
       mat.return[[i]]=as.matrix(temp1/min)
-      #scale all densitys to 10 or less
+      #scale all densities to 10 or less
       while (max(mat.return[[i]])>20) {
         mat.return[[i]]=mat.return[[i]]/1.05
       }
@@ -85,11 +85,11 @@ make.red=function(adj.list, splitn=1, weighted=FALSE){
 }
 
 plot.blk=function (x, ...) {
-  #slightly eddided version of the function from SNA, plots as square and slighly changed labeling also atached SNA and later removed
+  #slightly edited version of the function from SNA, plots as square and slightly changed labeling also attached SNA and later removed
   #why is it convention to not have comments
   
-  ##atach SNA for latter use and record packages that existed beforehand
-  #record the packagest that existed at the start
+  ##attach SNA for later use and record packages that existed beforehand
+  #record the packages that existed at the start
   pre=names(sessionInfo()$otherPkgs)
   #get rid of all nondefault packages
   invisible(lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE))
@@ -123,13 +123,13 @@ plot.blk=function (x, ...) {
       abline(v = j - 0.5, h = j - 0.5, lty = 3)
   }
   
-  ##dtach sna and reatach whatever eles
+  ##detach sna and reattach whatever else
   invisible(lapply(paste('package:',names(sessionInfo()$otherPkgs),sep=""),detach,character.only=TRUE,unload=TRUE))
   suppressMessages(invisible(lapply(pre, library, character.only = TRUE)))
 }
 
 plot.blk.labeless=function(bm){
-  #get rid of those pesky lables
+  #get rid of those pesky labels
   bm$plabels = rep("",length(bm$plabels))
   bm$glabels = ""
   plot.blk(bm)
