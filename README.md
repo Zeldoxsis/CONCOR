@@ -1,4 +1,7 @@
 # CONCOR
+
+**Update June 2020:** A more recent version of this code is now available as a package from [CRAN](https://cran.r-project.org/web/packages/concorR/index.html). For the most recent changes and news, see [this repository](https://github.com/ATraxLab/concorR). This page will no longer be updated.
+
 CONCOR (convergence of iterate correlations) is an algorithm meant for role analysis of social network data. It was introduced by Breiger et al. in the 1975 paper "An algorithm for clustering relational data with applications to social network analysis and comparison with multidimensional scaling." The version created here is meant for use on R data and was largely based off the description by Wasserman and Faust in the book "Social Network Analysis: Methods and Applications" as to be able to take into account directional social network data. The concor function itself does not rely on non-default packages but many of the supplementary functions rely on `igraph` and some of the blockmodeling functions rely on `sna`.
 
 ## Where to start
